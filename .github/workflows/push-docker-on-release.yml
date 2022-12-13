@@ -25,7 +25,7 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
       - name: Build image
         run: |
-          image_name=$(cut -d / -f 2 <<< ${{ github.repository }})
+          image_name=${{ secrets.DOCKER_OWNER }}/$(cut -d / -f 2 <<< ${{ github.repository }})
           tag_name=${{ github.ref_name }}
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
           docker build . -t ${image_name}:${tag_name}
