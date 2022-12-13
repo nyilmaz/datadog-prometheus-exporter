@@ -11,10 +11,9 @@ jobs:
     steps:
       - name: Build image
         run: |
-          image_name=$(cut -d / -f 2 <<< ${GITHUB_REPOSITORY})
+          image_name=$(cut -d / -f 2 <<< ${{ github.repository }})
           tag_name=${{ github.ref_name }}
           docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
           docker build -t ${image_name}:${tag_name}
           docker tag ${image_name}:${tag_name} ${image_name}:latest
           docker push --all-tags ${image_name}
-          wait
