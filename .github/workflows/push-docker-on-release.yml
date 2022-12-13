@@ -14,6 +14,6 @@ jobs:
           image_name=$(cut -d / -f 2 <<< ${{ github.repository }})
           tag_name=${{ github.ref_name }}
           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
-          docker build -t ${image_name}:${tag_name}
+          docker build . -t ${image_name}:${tag_name}
           docker tag ${image_name}:${tag_name} ${image_name}:latest
           docker push --all-tags ${image_name}
