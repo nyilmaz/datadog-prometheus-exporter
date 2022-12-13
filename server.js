@@ -9,6 +9,14 @@ if (!Array.prototype.last) {
     };
 }
 
+function checkEnv() {
+    const env = process.env;
+    if (!(env['DD_SITE'] && env['DD_APP_KEY'] && env['DD_API_KEY'])) {
+        console.error('DD_SITE, DD_APP_KEY, DD_API_KEY environment variables must all be provided');
+        process.exit(-1);
+    }
+}
+
 const gauges = {
     get(metric) {
         const cached = this[metric.name];
@@ -53,6 +61,6 @@ function writeEnd(response, out, statusCode = 200) {
     response.writeHead(statusCode);
     response.end(out);
 }
-
+checkEnv();
 console.info(`Server started with port: ${PORT}`);
 server.listen(PORT);
