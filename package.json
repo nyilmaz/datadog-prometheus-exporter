@@ -1,6 +1,6 @@
 {
   "name": "datadog-prometheus-exporter",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "prometheus exporter for datadog billable usage metrics",
   "main": "server.js",
   "scripts": {
