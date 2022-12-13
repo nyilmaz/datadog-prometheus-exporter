@@ -2,6 +2,7 @@ import http from 'http';
 import promClient, {register} from 'prom-client';
 import Metrics from "./metrics.js";
 
+const PORT = 8080;
 if (!Array.prototype.last) {
     Array.prototype.last = function () {
         return this[this.length - 1];
@@ -53,4 +54,5 @@ function writeEnd(response, out, statusCode = 200) {
     response.end(out);
 }
 
-server.listen(8080);
+console.info(`Server started with port: ${PORT}`);
+server.listen(PORT);
