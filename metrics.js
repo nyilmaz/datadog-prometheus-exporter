@@ -10,7 +10,7 @@ export default function Metrics() {
             return metric.substring(metric.indexOf('.') + 1, metric.indexOf('{')).replaceAll('.', '_');
         }
 
-        const fetcher = (query) => (function getDatadogMetric() {
+        const fetcher = (query, metricType = 'Counter') => (function getDatadogMetric() {
             const now = new Date();
             // get from the start of the month
             const params = {
@@ -24,7 +24,8 @@ export default function Metrics() {
                 .then(series => ({
                         value: series.pointlist.last().last(),
                         name: `billing_datadog_${deduceMetricName(series.expression)}`,
-                        help: `${series.expression}`
+                        help: `${series.expression}`,
+                        type: metricType,
                     })
                 )
                 .catch((error) => console.error(error));
@@ -33,7 +34,7 @@ export default function Metrics() {
         return {
             spans: fetcher('cumsum(sum:datadog.estimated_usage.apm.ingested_spans{*}.as_count())'),
             logs: fetcher('cumsum(sum:datadog.estimated_usage.logs.ingested_events{*}.as_count())'),
-            infra_hosts: fetcher('sum:datadog.estimated_usage.hosts{*}'),
+            infra_hosts: fetcher('sum:datadog.estimated_usage.hosts{*}', 'Gauge'),
             sds: fetcher('cumsum(sum:datadog.estimated_usage.sds.scanned_bytes{*}.as_count())'),
             rum: fetcher('cumsum(sum:datadog.estimated_usage.rum.sessions{*}.as_count())'),
         }

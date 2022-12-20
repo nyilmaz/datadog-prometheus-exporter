@@ -17,13 +17,27 @@ function checkEnv() {
     }
 }
 
-const gauges = {
-    get(metric) {
+const metricsCache = {
+    _get(metric) {
         const cached = this[metric.name];
         if (cached) {
             return cached;
         }
-        return this[metric.name] = new promClient.Gauge(metric);
+        return this[metric.name] = new promClient[metric.type](metric);
+    },
+    set(metric) {
+        const tool = this._get(metric);
+        tool.reset();
+        switch (metric.type) {
+            case 'Gauge':
+                tool.set(metric.value);
+                break;
+            case 'Counter':
+                tool.inc(metric.value);
+                break;
+            default:
+                console.error('Not implemented');
+        }
     }
 };
 const metrics = new Metrics();
@@ -37,7 +51,7 @@ function fetchMetrics() {
         metrics.datadogMetrics().infra_hosts(),
         metrics.datadogMetrics().rum(),
     ])
-        .then(metrics => metrics.forEach(metric => gauges.get(metric).set(metric.value)));
+        .then(metrics => metrics.forEach(metric => metricsCache.set(metric)));
 }
 
 async function handle(request, response) {
